@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <script src="js/jquery-2.1.3.min.js"></script>
+  <!-- <link rel="stylesheet" href="css/sample.css"> -->
+  <title>じゃんけん</title>
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background: #4f7eff;
+      padding: 20px;
+      margin: 100px auto;
+      width: 500px;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+    }
+
+    .modal-content img {
+      margin-top: 20px;
+      width: 400px;
+    }
+
+
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: -10px;
+    }
+
+    div {
+      margin: 7px;
+    }
+
+    .board2 {
+      display: grid;
+      grid-template-columns: repeat(5, 80px);
+      /* 4列に並べる */
+      gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, 80px);
+      /* 4列に並べる */
+      gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .card {
+      width: 80px;
+      height: 80px;
+      background-color: #3454ac;
+      /* 裏面の緑色 */
+      color: transparent;
+      /* 文字は隠す */
+      font-size: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* カードがめくられた時、または揃った時のスタイル */
+    .card.open {
+      background-color: #fff;
+      /* 表面は白色 */
+      color: #333;
+      /* 絵文字を表示 */
+      border: 2px solid #333;
+      cursor: default;
+    }
+
+    .btn {
+    background-color: #d1d361;
+    color: #ffffff;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+
+.btn:hover {
+    background-color: #D40052;
+    transform: translateY(-2px);
+}
+
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+    <h1>数字バトル</h1>
+  </header>
+
+  <main>
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span id="modal-close" class="modal-close">×</span>
+        <h1>遊び方</h1>
+        <h2>5回勝負！・・・3本先取</h2>
+        <p>相手より数が多ければ勝ち！</p>
+        <p>1度選んだカードは再び使えません</p>
+        <p>「１・３・５・７・９」の順番に並んでいます</p>
+        <img src="../kadai/img/01.png" alt="">
+
+      </div>
+    </div>
+
+
+    <h1 id="stateresult"></h1>
+    <h2 id="state">5回勝負！・・・3本先取</h2>
+
+    <div>あいて:<span id="cpu"></span></div>
+    <div id="game-board2" class="board"></div>
+
+    <div>あなた:<span id="player"></span></div>
+    <div id="game-board" class="board"></div>
+
+    <button class="btn" id="reset">再挑戦</button>
+
+    <div>勝ち:<span id="win">0</span>回</div>
+    <div>負け:<span id="lose">0</span>回</div>
+    <div>引き分け:<span id="safe">0</span>回</div>
+  </main>
+
+  <footer></footer>
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // sessionStorageにフラグがなければモーダルを表示
+      if (!sessionStorage.getItem("modalClosed")) {
+        document.getElementById("modal").style.display = "block";
+      }
+
+      // 閉じるボタンの処理
+      document.getElementById("modal-close").addEventListener("click", function () {
+        document.getElementById("modal").style.display = "none";
+        // フラグを立てる（このセッションでは再表示されない）
+        sessionStorage.setItem("modalClosed", "true");
+      });
+    });
+
+
+    const jans = ["1", "3", "5", "7", "9"]
+    let cpujans = ["1", "3", "5", "7", "9"]
+    let playjan;
+    let cpuja;
+    let winCount = 0;
+    let loseCount = 0;
+    let safeCount = 0;
+    let round = 0;
+
+    const emojis = ['1️⃣', '3️⃣', '5️⃣', '7️⃣', '9️⃣'];
+    const board = document.getElementById('game-board');
+    const board2 = document.getElementById('game-board2');
+
+    let cpuCards = [];
+
+    initGame2();
+    initGame();
+
+    function initGame() {
+      emojis.forEach((emoji, index) => {
+        const cardElement = document.createElement('div');
+        cardElement.classList.add('card');
+        cardElement.dataset.emoji = emoji;
+        cardElement.textContent = emoji;
+        board.appendChild(cardElement);
+
+        cardElement.addEventListener('click', () => {
+          // プレイヤー
+          cardElement.classList.add('open');
+          player.textContent = jans[index];
+          playjan = jans[index];
+
+          // CPU
+          openRandomCpuCard();
+
+          result();
+        });
+      });
+    }
+
+    function initGame2() {
+      emojis.forEach((emoji) => {
+        const cardElement = document.createElement('div');
+        cardElement.classList.add('card');
+        cardElement.dataset.emoji = emoji;
+        cardElement.textContent = emoji;
+        board2.appendChild(cardElement);
+        cpuCards.push(cardElement);
+      });
+    }
+
+    function openRandomCpuCard() {
+
+      const availableIndexes = cpuCards
+        .map((card, idx) => !card.classList.contains('open') ? idx : null)
+        .filter(idx => idx !== null);
+
+      if (availableIndexes.length === 0) return;
+
+      const randomIndex = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+
+      cpuCards[randomIndex].classList.add('open');
+
+      cpuja = cpujans[randomIndex];
+      cpujans[randomIndex] = null;
+      cpu.textContent = cpuja;
+    }
+
+    function result() {
+      if (playjan === cpuja) {
+        round++;
+        state.textContent = "引き分け"
+        safeCount++;
+        safe.textContent = safeCount;
+      } else if (playjan > cpuja) {
+        round++;
+        state.textContent = "勝ち";
+        winCount++;
+        win.textContent = winCount;
+      } else {
+        round++;
+        state.textContent = "負け";
+        loseCount++;
+        lose.textContent = loseCount;
+      }
+
+      if (round == 5) {
+        end()
+      }
+    }
+
+    function end() {
+      if (winCount == loseCount) {
+        stateresult.textContent = "引き分け";
+      } else if (winCount > loseCount) {
+        stateresult.textContent = "勝ち";
+
+      } else if (winCount < loseCount) {
+        stateresult.textContent = "負け";
+      }
+    }
+
+    reset.addEventListener("click", () => {
+      cpujans = ["1", "3", "5", "7", "9"]
+      winCount = 0;
+      loseCount = 0;
+      safeCount = 0;
+      round = 0;
+      win.textContent = winCount;
+      lose.textContent = loseCount;
+      safe.textContent = safeCount;
+      cpu.textContent = "";
+      player.textContent = "";
+      state.textContent = "5回勝負！・・・3本先取";
+      stateresult.textContent = "";
+      cpuCards = [];
+
+      const div2 = document.getElementById("game-board2");
+      if (div2.hasChildNodes()) {
+        for (let i = div2.childNodes.length - 1; i >= 0; i--) {
+          div2.removeChild(div2.childNodes[i]);
+        }
+      }
+      const div1 = document.getElementById("game-board");
+      if (div1.hasChildNodes()) {
+        for (let i = div1.childNodes.length - 1; i >= 0; i--) {
+          div1.removeChild(div1.childNodes[i]);
+        }
+      }
+      initGame2();
+      initGame();
+    }
+    )
+
+  </script>
+</body>
+
+</html>
