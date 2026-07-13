@@ -40,6 +40,188 @@
     }
 
 
+    .confetti {
+      position: absolute;
+      top: -10px;
+      width: 10px;
+      height: 10px;
+      animation: confetti-fall 4s ease-in infinite;
+    }
+
+    /* カラフルな色をランダムに設定 */
+    .confetti:nth-child(1) {
+      background: #ff6b6b;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .confetti:nth-child(2) {
+      background: #4ecdc4;
+      left: 20%;
+      animation-delay: 0.3s;
+    }
+
+    .confetti:nth-child(3) {
+      background: #ffe66d;
+      left: 30%;
+      animation-delay: 0.6s;
+    }
+
+    .confetti:nth-child(4) {
+      background: #95e1d3;
+      left: 40%;
+      animation-delay: 0.9s;
+    }
+
+    .confetti:nth-child(5) {
+      background: #f38181;
+      left: 50%;
+      animation-delay: 1.2s;
+    }
+
+    .confetti:nth-child(6) {
+      background: #aa96da;
+      left: 60%;
+      animation-delay: 0.4s;
+    }
+
+    .confetti:nth-child(7) {
+      background: #fcbad3;
+      left: 70%;
+      animation-delay: 0.7s;
+    }
+
+    .confetti:nth-child(8) {
+      background: #a8e6cf;
+      left: 80%;
+      animation-delay: 1s;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(0) rotate(0deg) translateX(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(100vh) rotate(720deg) translateX(100px);
+        opacity: 0;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+
+    .snow-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 9999;
+    }
+
+    .snow {
+      position: absolute;
+      top: -10px;
+      background: rgb(10, 1, 1);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      opacity: 0.8;
+      animation: fall linear infinite;
+    }
+
+    .snow0 {
+      position: absolute;
+      top: -10px;
+      background: rgb(49, 71, 165);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      opacity: 0.8;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) translateX(0);
+      }
+
+      100% {
+        transform: translateY(100vh) translateX(50px);
+      }
+    }
+
+    /* 各雪に異なる位置と速度を設定 */
+    .snow:nth-child(1) {
+      left: 10%;
+      animation-duration: 8s;
+    }
+
+    .snow:nth-child(2) {
+      left: 20%;
+      animation-duration: 10s;
+      width: 7px;
+      height: 7px;
+    }
+
+    .snow:nth-child(3) {
+      left: 30%;
+      animation-duration: 7s;
+      width: 4px;
+      height: 4px;
+    }
+
+    .snow:nth-child(4) {
+      left: 40%;
+      animation-duration: 12s;
+    }
+
+    .snow:nth-child(5) {
+      left: 50%;
+      animation-duration: 9s;
+      width: 6px;
+      height: 6px;
+    }
+
+    .snow:nth-child(6) {
+      left: 60%;
+      animation-duration: 11s;
+    }
+
+    .snow:nth-child(7) {
+      left: 70%;
+      animation-duration: 8s;
+      width: 5px;
+      height: 5px;
+    }
+
+    .snow:nth-child(8) {
+      left: 80%;
+      animation-duration: 10s;
+      width: 7px;
+      height: 7px;
+    }
+
+    .snow:nth-child(9) {
+      left: 90%;
+      animation-duration: 9s;
+      width: 4px;
+      height: 4px;
+    }
+
+    .snow:nth-child(10) {
+      left: 95%;
+      animation-duration: 11s;
+    }
+
+
+
     body {
       font-family: sans-serif;
       text-align: center;
@@ -95,23 +277,22 @@
     }
 
     .btn {
-    background-color: #d1d361;
-    color: #ffffff;
-    border: none;
-    padding: 12px 25px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-}
+      background-color: #d1d361;
+      color: #ffffff;
+      border: none;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+    }
 
 
-.btn:hover {
-    background-color: #D40052;
-    transform: translateY(-2px);
-}
-
+    .btn:hover {
+      background-color: #D40052;
+      transform: translateY(-2px);
+    }
   </style>
 
 </head>
@@ -136,21 +317,63 @@
       </div>
     </div>
 
+    <div id="message" class="hidden">
+      </div>
 
-    <h1 id="stateresult"></h1>
-    <h2 id="state">5回勝負！・・・3本先取</h2>
+      <div id="message1" class="hidden">
+        <div class="snow-container">
+          <div class="confetti"></div>
+          <div class="confetti"></div>
+          <div class="confetti"></div>
+          <div class="confetti"></div>
+          <div class="confetti"><img
+              src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiDItokBzijIzLjNARjURWfJUcXuG5KR7YYDtuzoKJSXiT_lD-REZ5Q6dow5yG78PezowntId_uFwbFsjUab75-UYFRbPftr7xHORYePSxl9DyV9eHdTvICdbubzYZFhmakWnSgHQOIkco/s180-c/valentinesday_cupid.png"
+              alt=""></div>
+          <div class="confetti"></div>
+          <div class="confetti"></div>
+          <div class="confetti"></div>
+        </div>
+      </div>
+      <audio id="bgm-audio" src="assets/BGM.mp3" loop preload="auto" hidden></audio>
 
-    <div>あいて:<span id="cpu"></span></div>
-    <div id="game-board2" class="board"></div>
+      <div id="message2" class="hidden">
+        <div class="snow-container">
+          <div class="snow"><img
+              src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg44EYAGTnkSN-MRACJ3MW3_rmq4Uz5Sl1tCd8ZhvMllkIQG4p700vCSnU7shr-8Dwt9xi-Y1qhas5IXSWc6aZmc0iPxxsZlF2goWce4IY9or-0I7JOv63QVnAKROYdizS3O9CtRy4SYxs/s400/warumono.png"
+              alt=""></div>
+          <div class="snow"></div>
+          <div class="snow"></div>
+          <div class="snow"></div>
+          <div class="snow"></div>
+          <div class="snow"></div>
+          <div class="snow"></div>
+          <div class="snow"></div>
+          <div class="snow"></div>
+          <div class="snow"></div>
+        </div>
+      </div>
 
-    <div>あなた:<span id="player"></span></div>
-    <div id="game-board" class="board"></div>
+      <audio id="draw1" src="../kadai/assets/draw.mp3"></audio>
+      <audio id="win1" src="../kadai/assets/win.mp3"></audio>
+      <audio id="loss1" src="../kadai/assets/loss.mp3"></audio>
+      <!-- <audio id="draw2" src="../kadai/assets/draw.mp3"></audio> -->
+      <audio id="win2" src="../kadai/assets/win2.mp3"></audio>
+      <audio id="loss2" src="../kadai/assets/loss2.mp3"></audio>
 
-    <button class="btn" id="reset">再挑戦</button>
+      <h1 id="stateresult"></h1>
+      <h2 id="state">5回勝負！・・・3本先取</h2>
 
-    <div>勝ち:<span id="win">0</span>回</div>
-    <div>負け:<span id="lose">0</span>回</div>
-    <div>引き分け:<span id="safe">0</span>回</div>
+      <div>あいて:<span id="cpu"></span></div>
+      <div id="game-board2" class="board"></div>
+
+      <div>あなた:<span id="player"></span></div>
+      <div id="game-board" class="board"></div>
+
+      <button class="btn" id="reset">再挑戦</button>
+
+      <div>勝ち:<span id="win">0</span>回</div>
+      <div>負け:<span id="lose">0</span>回</div>
+      <div>引き分け:<span id="safe">0</span>回</div>
   </main>
 
   <footer></footer>
@@ -239,6 +462,10 @@
       cpu.textContent = cpuja;
     }
 
+
+    const win2 = document.getElementById('win2');
+    const loss2 = document.getElementById('loss2');
+
     function result() {
       if (playjan === cpuja) {
         round++;
@@ -250,11 +477,15 @@
         state.textContent = "勝ち";
         winCount++;
         win.textContent = winCount;
+        win2.currentTime = 0;
+        win2.play();
       } else {
         round++;
         state.textContent = "負け";
         loseCount++;
         lose.textContent = loseCount;
+        loss2.currentTime = 0;
+        loss2.play();
       }
 
       if (round == 5) {
@@ -262,14 +493,28 @@
       }
     }
 
+
+    const draw1 = document.getElementById('draw1');
+    const win1 = document.getElementById('win1');
+    const loss1 = document.getElementById('loss1');
+
     function end() {
       if (winCount == loseCount) {
         stateresult.textContent = "引き分け";
+        message.classList.remove("hidden");
+        draw1.currentTime = 0;
+        draw1.play();
       } else if (winCount > loseCount) {
         stateresult.textContent = "勝ち";
+        message1.classList.remove("hidden");
+        win1.currentTime = 0;
+        win1.play();
 
       } else if (winCount < loseCount) {
         stateresult.textContent = "負け";
+        message2.classList.remove("hidden");
+        loss1.currentTime = 0;
+        loss1.play();
       }
     }
 
