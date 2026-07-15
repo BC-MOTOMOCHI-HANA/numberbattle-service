@@ -13,6 +13,7 @@
     <h1>履歴表示</h1>
     <div id="view"></div>
     <a href="../kadai/janken_tpl.html" class="btn">戻る</a>
+    <button id="clear" class="btn">Clear</button>
     <script>
 
         const records = [];
@@ -67,25 +68,46 @@
 
         records.sort((a, b) => a.ts - b.ts);
         //records を ts（タイムスタンプ）の昇順で並べ替え（古い順→新しい順）
-            //sort は配列の要素の順番を変えるための関数
-            //比較関数は「2つの要素 a と b を比べて、その順序を決める」
-                //比較関数が負の値を返すと a を b の前に置く
-                //0 を返すと a と b の順序は変えない（
-            //sort は配列全体を対象にしたアルゴリズム
-            //比較は常に「2つの要素」を受け取り、その順序を決める
-            //でも「2つずつしか見ない」操作を何度も繰り返すことで、配列全体が整う
-            
+        //sort は配列の要素の順番を変えるための関数
+        //比較関数は「2つの要素 a と b を比べて、その順序を決める」
+        //比較関数が負の値を返すと a を b の前に置く
+        //0 を返すと a と b の順序は変えない（
+        //sort は配列全体を対象にしたアルゴリズム
+        //比較は常に「2つの要素」を受け取り、その順序を決める
+        //でも「2つずつしか見ない」操作を何度も繰り返すことで、配列全体が整う
+
+        function formatFromISO(iso) {
+            //toISOString() は UTC（協定世界時）での文字列→例）「2026 14:09:54」
+
+            if (!iso) return '';
+            const d = new Date(iso);
+            const Y = d.getFullYear();
+            const hh = String(d.getHours()).padStart(2, '0');
+            //getHours() で「その日の時（0〜23）」を取得
+            // String にして2文字になるよう
+            // 長さが2になるまで、文字列の先頭に '0' を詰める
+
+            const mm = String(d.getMinutes()).padStart(2, '0');
+            const ss = String(d.getSeconds()).padStart(2, '0');
+            return Y + ' ' + hh + ':' + mm + ':' + ss;
+        }
+
         if (records.length === 0) {
             $('#view').text('履歴はありません');
         } else {
             records.forEach(item => {
                 const r = item.rec;
-                // const html = '日時: ' + (r.time || '') + '<br>' + '勝敗: ' + (r.result || '') + '<br>' + '勝ち: ' + (r.win || '') + '回   ' + '負け: ' + (r.lose || '') + '回   ' + '引き分け: ' + (r.draw || '') + '回<br><hr>';
-                const html = '日時: ' + (r.time || '') + '<br>' + '勝敗: ' + (r.result || '') + '<br>' + '勝ち: ' + (r.win || '') + '回   ' + '負け: ' + (r.lose || '') + '回   ' + '引き分け: ' + (r.draw || '') + '回<br><hr>';
+                const html = '日時: ' + formatFromISO(r.time) + '<br>' + '勝敗: ' + (r.result || '') + '<br>' + '勝ち: ' + (r.win || '') + '回   ' + '負け: ' + (r.lose || '') + '回   ' + '引き分け: ' + (r.draw || '') + '回<br><hr>';
                 $('#view').append(html);
             }
             );
         }
+
+        //clear クリックイベント
+        $("#clear").on("click", function () {
+            localStorage.clear();
+            $("#list").empty();
+        });
 
     </script>
 </body>
