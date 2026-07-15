@@ -10,10 +10,10 @@
     }
 
     .modal-content {
-        background: #4f7eff;
-        padding: 20px;
+        background: #d1d361;
+        padding: 15px;
         margin: 100px auto;
-        width: 500px;
+        width: 35%;
         position: relative;
     }
 
@@ -26,7 +26,7 @@
 
     .modal-content img {
         margin-top: 20px;
-        width: 400px;
+        width: 250px;
     }
 
 
