@@ -1,0 +1,286 @@
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background: #4f7eff;
+        padding: 20px;
+        margin: 100px auto;
+        width: 500px;
+        position: relative;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .modal-content img {
+        margin-top: 20px;
+        width: 400px;
+    }
+
+
+    .confetti {
+        position: absolute;
+        top: -10px;
+        width: 10px;
+        height: 10px;
+        animation: confetti-fall 4s ease-in infinite;
+    }
+
+    /* カラフルな色をランダムに設定 */
+    .confetti:nth-child(1) {
+        background: #ff6b6b;
+        left: 10%;
+        animation-delay: 0s;
+    }
+
+    .confetti:nth-child(2) {
+        background: #4ecdc4;
+        left: 20%;
+        animation-delay: 0.3s;
+    }
+
+    .confetti:nth-child(3) {
+        background: #ffe66d;
+        left: 30%;
+        animation-delay: 0.6s;
+    }
+
+    .confetti:nth-child(4) {
+        background: #95e1d3;
+        left: 40%;
+        animation-delay: 0.9s;
+    }
+
+    .confetti:nth-child(5) {
+        background: #f38181;
+        left: 50%;
+        animation-delay: 1.2s;
+    }
+
+    .confetti:nth-child(6) {
+        background: #aa96da;
+        left: 60%;
+        animation-delay: 0.4s;
+    }
+
+    .confetti:nth-child(7) {
+        background: #fcbad3;
+        left: 70%;
+        animation-delay: 0.7s;
+    }
+
+    .confetti:nth-child(8) {
+        background: #a8e6cf;
+        left: 80%;
+        animation-delay: 1s;
+    }
+
+    @keyframes confetti-fall {
+        0% {
+            transform: translateY(0) rotate(0deg) translateX(0);
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(100vh) rotate(720deg) translateX(100px);
+            opacity: 0;
+        }
+    }
+
+    .hidden {
+        display: none;
+    }
+
+
+    .snow-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 9999;
+    }
+
+    .snow {
+        position: absolute;
+        top: -10px;
+        background: rgb(10, 1, 1);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        opacity: 0.8;
+        animation: fall linear infinite;
+    }
+
+    .snow0 {
+        position: absolute;
+        top: -10px;
+        background: rgb(49, 71, 165);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        opacity: 0.8;
+        animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+        0% {
+            transform: translateY(0) translateX(0);
+        }
+
+        100% {
+            transform: translateY(100vh) translateX(50px);
+        }
+    }
+
+    /* 各雪に異なる位置と速度を設定 */
+    .snow:nth-child(1) {
+        left: 10%;
+        animation-duration: 8s;
+    }
+
+    .snow:nth-child(2) {
+        left: 20%;
+        animation-duration: 10s;
+        width: 7px;
+        height: 7px;
+    }
+
+    .snow:nth-child(3) {
+        left: 30%;
+        animation-duration: 7s;
+        width: 4px;
+        height: 4px;
+    }
+
+    .snow:nth-child(4) {
+        left: 40%;
+        animation-duration: 12s;
+    }
+
+    .snow:nth-child(5) {
+        left: 50%;
+        animation-duration: 9s;
+        width: 6px;
+        height: 6px;
+    }
+
+    .snow:nth-child(6) {
+        left: 60%;
+        animation-duration: 11s;
+    }
+
+    .snow:nth-child(7) {
+        left: 70%;
+        animation-duration: 8s;
+        width: 5px;
+        height: 5px;
+    }
+
+    .snow:nth-child(8) {
+        left: 80%;
+        animation-duration: 10s;
+        width: 7px;
+        height: 7px;
+    }
+
+    .snow:nth-child(9) {
+        left: 90%;
+        animation-duration: 9s;
+        width: 4px;
+        height: 4px;
+    }
+
+    .snow:nth-child(10) {
+        left: 95%;
+        animation-duration: 11s;
+    }
+
+
+
+    body {
+        font-family: sans-serif;
+        text-align: center;
+        margin-top: -10px;
+    }
+
+    div {
+        margin: 7px;
+    }
+
+    .board2 {
+        display: grid;
+        grid-template-columns: repeat(5, 80px);
+        /* 4列に並べる */
+        gap: 10px;
+        justify-content: center;
+        margin: 20px auto;
+    }
+
+    .board {
+        display: grid;
+        grid-template-columns: repeat(5, 80px);
+        /* 4列に並べる */
+        gap: 10px;
+        justify-content: center;
+        margin: 20px auto;
+    }
+
+    .card {
+        width: 80px;
+        height: 80px;
+        background-color: #3454ac;
+        /* 裏面の緑色 */
+        color: transparent;
+        /* 文字は隠す */
+        font-size: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    /* カードがめくられた時、または揃った時のスタイル */
+    .card.open {
+        background-color: #fff;
+        /* 表面は白色 */
+        color: #333;
+        /* 絵文字を表示 */
+        border: 2px solid #333;
+        cursor: default;
+    }
+
+    .btn {
+        background-color: #d1d361;
+        color: #ffffff;
+        border: none;
+        padding: 12px 25px;
+        margin: 25px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+    }
+
+
+    .btn:hover {
+        background-color: #D40052;
+        transform: translateY(-2px);
+    }

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8" />
+    <script src="js/jquery-2.1.3.min.js"></script>
+    <link rel="stylesheet" href="../kadai/css/index.css">
+    <title>localstorage</title>
+</head>
+
+<body>
+
+    <h1>履歴表示</h1>
+    <div id="view"></div>
+    <a href="../kadai/janken_tpl.html" class="btn">戻る</a>
+    <script>
+
+        const records = [];
+        //履歴を入れる空の配列 records を作成
+
+        for (let i = 0; i < localStorage.length; i++) {
+            //localStorage に保存されているすべてのキーを順に見る
+            const key = localStorage.key(i);
+            if (!key) continue;
+            //キーが無ければ次のループに飛ぶ
+            if (!key.startsWith('record_')) continue;
+
+            const raw = localStorage.getItem(key);
+            if (!raw) continue;
+
+            let obj;
+            try {
+                obj = JSON.parse(raw);
+                //raw（文字列）を JSON としてパースしてオブジェクトに変換
+                // localStorage に保存したものは文字列
+                // JSON.stringify(obj) でオブジェクトを文字列にして保存
+                // JSON.parse(raw) はその文字列を元のオブジェクトに戻す
+            } catch (e) {
+                console.warn('Invalid JSON for key', key, e);
+                continue;
+            }
+
+            const ts = Number(key.split('_')[1]) || 0;
+            //key.split('_')
+            //文字列 key を "_" で「切って」配列に
+            //例: 'record_1623'.split('_') → ['record','1623']
+
+            //key.split('_')[1]
+            //split の結果配列の「2番目の要素」を取り出す
+            //例: ['record','1623'][1] → '1623'（文字列）
+
+            //Number(...)
+            //文字列を数字に直す
+
+            //|| 0 
+            //変換に失敗「falsy（偽とみなされる値）」したら 0 
+            //falsy に入る代表：null, undefined, '', 0, NaN, false
+            //例: key='foo' → ts=0（分割して2つ目がないため）
+            //例: key = 'record_abc' → Number('abc') は NaN → ts = 0
+
+            records.push({
+                ts: ts, rec: obj
+                //オブジェクト{ ts: 数値, rec: パース済みオブジェクト }
+            }
+            );
+        }
+
+        records.sort((a, b) => a.ts - b.ts);
+        //records を ts（タイムスタンプ）の昇順で並べ替え（古い順→新しい順）
+            //sort は配列の要素の順番を変えるための関数
+            //比較関数は「2つの要素 a と b を比べて、その順序を決める」
+                //比較関数が負の値を返すと a を b の前に置く
+                //0 を返すと a と b の順序は変えない（
+            //sort は配列全体を対象にしたアルゴリズム
+            //比較は常に「2つの要素」を受け取り、その順序を決める
+            //でも「2つずつしか見ない」操作を何度も繰り返すことで、配列全体が整う
+            
+        if (records.length === 0) {
+            $('#view').text('履歴はありません');
+        } else {
+            records.forEach(item => {
+                const r = item.rec;
+                // const html = '日時: ' + (r.time || '') + '<br>' + '勝敗: ' + (r.result || '') + '<br>' + '勝ち: ' + (r.win || '') + '回   ' + '負け: ' + (r.lose || '') + '回   ' + '引き分け: ' + (r.draw || '') + '回<br><hr>';
+                const html = '日時: ' + (r.time || '') + '<br>' + '勝敗: ' + (r.result || '') + '<br>' + '勝ち: ' + (r.win || '') + '回   ' + '負け: ' + (r.lose || '') + '回   ' + '引き分け: ' + (r.draw || '') + '回<br><hr>';
+                $('#view').append(html);
+            }
+            );
+        }
+
+    </script>
+</body>
+
+</html>
