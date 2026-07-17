@@ -1,0 +1,145 @@
+/* header h1{
+text-align: center;
+}
+
+#output {
+    position: fixed;
+    bottom: 0;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-container-item {
+    display: flex;
+    justify-content: center;
+    text-align: left;
+    flex-direction: column;
+    align-items: stretch; */
+    /* width: 300px; */
+/* } */
+
+/* #h1 {
+    background-color: aliceblue;
+
+}
+
+#h2 {
+    background-color: greenyellow;
+}
+
+.send {
+    bottom: 0;
+    justify-content: center;
+}  */
+
+
+
+
+
+
+
+html,
+body {
+    /* height: 100%; */
+    /* margin: 0; */
+}
+
+body {
+    background-color:rgb(80, 118, 255);
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* min-height: 100vh; */
+}
+
+ /* header をそのまま置く /  */
+header { 
+        background-color: rgb(80, 118, 255);
+text-align: center;
+}
+
+/* main を残り高さに */
+main {
+    /* flex: 1 1 auto; */
+    /* display: flex; */
+    flex-direction: column;
+}
+
+/* output を残り領域で伸ばす  */
+#output { 
+/* flex: 1 1 auto; */
+/* overflow: auto; */
+/* box-sizing: border-box; */
+/* padding: 8px; */
+padding-top: 15%;
+padding-bottom: 15%;
+margin-top: 10%;
+margin-bottom: 8%;
+}
+
+/* 送信欄は flow 内におく（fixed を外す） / */
+ .send {
+  /* display: flex;  */
+  gap: 8px; 
+  /* padding: 8px;  */
+  /* background-color: #fff;  */
+  /* align-items: center;  */
+  /* margin-top: 40%; */
+}
+
+/* メッセージは id ではなくクラスで */
+.h1 {
+    /* text-align: left !important; */
+    background-color: aliceblue;
+    width: auto;
+    /* max-width: 80%; */
+    padding: 6px;
+    margin: 4px;
+    border-radius: 6px;
+}
+
+.h2 {
+    /* text-align: right !important; */
+    background-color: greenyellow;
+    width: auto;
+    /* max-width: 80%; */
+    padding: 6px;
+    margin: 4px;
+    border-radius: 6px;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-container-item {
+    /* display: flex; */
+    /* justify-content: center; */
+    /* text-align: left; */
+    /* flex-direction: column; */
+    /* align-items: stretch; */
+    
+    /* width: 300px; */
+     } 
+
+.btn {
+    background-color: rgb(29, 77, 252);
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    /* font-size: 16px; */
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+
+.btn:hover {
+    background-color: #D40052;
+    transform: translateY(-2px);
+}
+
