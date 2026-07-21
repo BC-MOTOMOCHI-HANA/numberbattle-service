@@ -26,8 +26,6 @@
 
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- JQuery -->
-
 
     <!--** 以下Firebase **-->
     <script type="module">
@@ -83,7 +81,7 @@
             const randomIndex = Math.floor(Math.random() * messages.length);
             h2 = `<p class="h2">${messages[randomIndex]}</p>`
 
-            let h = '<div>' + h1 + h2 + '</div>';
+            let h = '<div>' + '<div class="h1out">' + h1 + '</div>'+ '<br>'+ '<div class="h2out">' + h2 + '</div>'+ '</div>';
 
             $("#output").append(h);
             $('#output').scrollTop($('#output')[0].scrollHeight);
