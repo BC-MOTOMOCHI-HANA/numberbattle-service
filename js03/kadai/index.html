@@ -16,7 +16,7 @@
     </header>
     <main>
 
-        <div id="output" style="overflow: auto;height: 300px;"></div>
+        <div id="output"></div>
         <div class="send flex-container">
             <textarea id="text" cols="30" rows="1"></textarea>
             <button id="send" class="btn">送信</button>
@@ -33,14 +33,21 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
         import { getDatabase, ref, push, set, update, onChildAdded, onChildChanged, remove, onChildRemoved }
             from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";    // https://firebase.google.com/docs/web/setup#available-libraries
+        import { runTransaction, onValue } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 
         // Your web app's Firebase configuration
- 
+
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app); // RealtimeDatabase使う
         const dbRef = ref(db, "chat"); // RealtimeDatabase”chat“を使う
+
+        const SELECTORS = {
+            OUTPUT: "#output",
+            TEXT_INPUT: "#text",
+            SEND_BTN: "#send"
+        };
 
         const messages = [
             "いいねそのちょうしでつづけてね！！",
@@ -61,66 +68,129 @@
             "まいにちちょっとたのしくなりそう！"
         ];
 
-        //送信イベント
-        $("#send").on("click", function () {
-            const text = $("#text").val().trim();
-            if (text === "") return; // 空文字チェック
+        // --- ヘルパー関数 ---
+        const getChatRef = (key = "") => ref(db, key ? `chat/${key}` : "chat");
+        //key が渡されなかったら、自動的に ""（空文字）にする
+        //key ? ... : ...: 「三項演算子」
 
-            const msg = { text: text };
-            const newPostRef = push(dbRef);
-            set(newPostRef, msg);
-            $("#text").val(""); // 送信後にフォームをクリア
-        });
+        const getRandomMessage = () => messages[Math.floor(Math.random() * messages.length)];
 
-        //受信イベント
-        onChildAdded(dbRef, function (data) {
-            const msg = data.val();
-            const key = data.key;
-            const randomIndex = Math.floor(Math.random() * messages.length);
-
-            const h = `
+        const createMessageHTML = (key, text, praise, likes = 0) => `
         <div id="${key}">
             <div class="h1out">
-                <p id="${key}_update" class="flex-container-item h1" contenteditable="true">${msg.text}</p>
+                <p id="${key}_update" class="flex-container-item h1" contenteditable="true">${text}</p>
+                <div class="send">
+                    <button class="remove btn btn-small" data-key="${key}">削除</button>
+                    <button class="update btn btn-small" data-key="${key}">更新</button>
+                    <button class="like-btn btn btn-small" data-key="${key}">
+                        ❤ 
+                        <span class="count">${likes}</span>
+                    </button>
+                </div>
             </div><br>
             <div class="h2out">
-                <p class="h2">${messages[randomIndex]}</p>
-            </div>
-            <div class="send">
-                <button class="remove btn btn-small" data-key="${key}">削除</button>
-                <button class="update btn btn-small" data-key="${key}">更新</button>
+                <p class="h2">${praise}</p>
             </div>
         </div>`;
+        //contenteditable="true": ブラウザ上で直接テキストを編集できるようにする属性
 
-            $("#output").append(h);
-            $('#output').scrollTop($('#output')[0].scrollHeight);
+        // --- イベント処理 ---
+
+        // 送信
+        $(SELECTORS.SEND_BTN).on("click", () => {
+            const $input = $(SELECTORS.TEXT_INPUT);
+            const text = $input.val().trim();
+            // 入力欄の文字を取得し、前後の不要な空白を削除
+            if (!text) return;
+
+            set(push(getChatRef()), {
+                text: text,
+                praise: getRandomMessage()
+            });
+            //Firebaseに新しいデータを追加（push）して保存（set）
+            //push(getChatRef()): Firebaseの chat という場所に、新しい「空の箱（ID付き）」を作る
+            //et(..., { text }): その作った箱の中に { text: "入力した内容" } というデータを保存
+            $input.val("");
+            //送信後、入力欄を空に
         });
 
-        //削除イベント
-        $("#output").on("click", ".remove", function () {
-            const key = $(this).attr("data-key");
-            const remove_item = ref(db, "chat/" + key);
-            remove(remove_item);//Firebaseデータ削除関数
+        // 受信（追加）
+        onChildAdded(getChatRef(), (data) => {
+            //onChildAdded は、Firebaseが内部で「追加されたデータ」を自動的に取得し、それを (data) => { ... } の data という箱に入れる
+            const $output = $(SELECTORS.OUTPUT);
+            const msg = data.val();
+            const likes = msg.likes || 0;
+            const likeRef = ref(db, `chat/${data.key}/likes`);
+            //ref(db, ...): Firebaseのデータベース内の「特定の場所」を指定
+            //chat / ${ data.key }/likes:
+            //chat /：チャットデータ全体の場所
+            // ${ data.key }：今表示している「このメッセージ」のID
+            // /likes：そのメッセージの中にある「いいね数」という項目
+
+            // データをまとめて取得
+            $output.append(createMessageHTML(data.key, msg.text, msg.praise, likes));
+            //data.key: Firebaseが自動で割り振ったID（削除や更新の目印）
+            //data.val().text: 実際に保存されているメッセージ本体
+            //この2つを createMessageHTML に渡すことで、「どのIDの、どんなメッセージを表示するか」をHTMLに反映
+            $output.scrollTop($output[0].scrollHeight);
+
+            onValue(likeRef, (snapshot) => {
+            // onValue: 指定した場所（likeRef）に何か変化（増減など）があったら、即座に中身を教えてねという命令
+            // (snapshot) => { ... }: 変化があったときに実行される関数。snapshot という箱の中に、その時点の最新のデータが入ってくる
+                const count = snapshot.val() || 0;
+                //データベースに保存されている実際の値（いいね数）を取り出す
+                $(`#${data.key} .count`).text(count); 
+                //画面の数字だけを更新
+            });
         });
 
-        //更新イベント
-        $("#output").on("click", ".update", function () {
-            const key = $(this).attr("data-key");
-            update(ref(db, "chat/" + key), {
+        //Enterで送信
+        $(SELECTORS.TEXT_INPUT).on("keypress", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                // Shift+Enterは改行にするのが一般的
+                e.preventDefault();
+                // 改行が入るのを防ぐ
+                $(SELECTORS.SEND_BTN).click();
+                // 送信ボタンのクリック処理を呼ぶ
+            }
+        });
+
+        // 削除
+        $(SELECTORS.OUTPUT).on("click", ".remove", function () {
+            remove(getChatRef($(this).data("key")));
+        });
+
+        // 更新
+        $(SELECTORS.OUTPUT).on("click", ".update", function () {
+            const key = $(this).data("key");
+            update(getChatRef(key), {
                 text: $("#" + key + '_update').text()
             });
         });
 
-        //削除処理がFirebase側で実行されたらイベント発生!
-        onChildRemoved(dbRef, (data) => {
-            $("#" + data.key).remove();//DOM操作関数(対象を削除)
+        // 削除反映
+        onChildRemoved(getChatRef(), (data) => {
+            $("#" + data.key).remove();
         });
 
-        //更新処理がFirebase側で実行されたらイベント発生!
-        onChildChanged(dbRef, (data) => {
-            $("#" + data.key + '_update').html(data.val().text);
-            $("#" + data.key + '_update').fadeOut(800).fadeIn(800);
+        // 更新反映
+        onChildChanged(getChatRef(), (data) => {
+            const $editArea = $("#" + data.key + '_update');
+            $editArea.text(data.val().text);
+            //画面上の文字を最新のものに書き換え
+            $editArea.fadeOut(800).fadeIn(800);
         });
+
+        // いいねボタンの処理
+        $(SELECTORS.OUTPUT).on("click", ".like-btn", function () {
+            const key = $(this).data("key");
+            const likeRef = ref(db, `chat/${key}/likes`);
+
+            runTransaction(likeRef, (currentCount) => {
+                return (currentCount || 0) + 1;
+            });
+        });
+
     </script>
 
 </body>

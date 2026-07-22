@@ -15,6 +15,9 @@ body {
     margin-left: 30%;
     margin-right: 30%;
     background-color: #fff;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 300px;
 }
 
 .h1out {
@@ -31,6 +34,7 @@ body {
     padding: 6px;
     margin: 4px;
     margin-right: 10%;
+    margin-left: 10%;
     border-radius: 6px;
 }
 
@@ -53,7 +57,7 @@ body {
 }
 
 .btn {
-    background-color: rgb(29, 77, 252);
+    background-color: rgb(63, 105, 254);
     color: #fff;
     border: none;
     padding: 12px 25px;
@@ -64,11 +68,24 @@ body {
 }
 
 .btn:hover {
-    background-color: #D40052;
+    background-color: #d65688;
     transform: translateY(-2px);
 }
 
 .btn-small {
     padding: 6px 10px;
     font-weight: bold;
+}
+
+.like-btn {
+    background-color: #d65688;
+    margin-right: 2%;
+}
+
+.like-btn:hover {
+    background-color: #d60354;
+}
+
+.update {
+    margin-right: 1%;
 }
