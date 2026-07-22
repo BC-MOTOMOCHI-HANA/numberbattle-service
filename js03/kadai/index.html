@@ -31,66 +31,96 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-        import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
+        import { getDatabase, ref, push, set, update, onChildAdded, onChildChanged, remove, onChildRemoved }
             from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";    // https://firebase.google.com/docs/web/setup#available-libraries
 
         // Your web app's Firebase configuration
-
+ 
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app); // RealtimeDatabase使う
         const dbRef = ref(db, "chat"); // RealtimeDatabase”chat“を使う
 
+        const messages = [
+            "いいねそのちょうしでつづけてね！！",
+            "びっくりしたけどおもしろかった！！",
+            "それなに！もっときかせてほしいね！",
+            "さいこうそのはなしもっときかせて！",
+            "おもしろいねわらったよありがとう！",
+            "なるほどべんきょうになったよまたね",
+            "それはすごいそんけいしちゃうわ！！",
+            "きょうはいいひになりそうだねっ！！",
+            "おもしろいしてんだねかんがえた！！",
+            "なるほどねあたらしいはっけんだね！",
+            "いいせんすもっとみせてほしいな！！",
+            "こころにのこるいいひとことだ！！！",
+            "いいねもっとたくさんきかせてよ！！",
+            "さいこうだねいっしょにやりたいな！",
+            "すごいはっそうだねまねしてみたい！",
+            "まいにちちょっとたのしくなりそう！"
+        ];
+
         //送信イベント
         $("#send").on("click", function () {
-            const msg = {
-                text: $("#text").val()
-            }
+            const text = $("#text").val().trim();
+            if (text === "") return; // 空文字チェック
+
+            const msg = { text: text };
             const newPostRef = push(dbRef);
             set(newPostRef, msg);
+            $("#text").val(""); // 送信後にフォームをクリア
         });
 
         //受信イベント
         onChildAdded(dbRef, function (data) {
             const msg = data.val();
             const key = data.key;
-
-            let h1;
-            h1 = `<p class="flex-container-item h1">${msg.text}</p>`
-
-            let h2;
-            const messages = [
-                "いいねそのちょうしでつづけてね！！",
-                "びっくりしたけどおもしろかった！！",
-                "それなに！もっときかせてほしいね！",
-                "さいこうそのはなしもっときかせて！",
-                "おもしろいねわらったよありがとう！",
-                "なるほどべんきょうになったよまたね",
-                "それはすごいそんけいしちゃうわ！！",
-                "きょうはいいひになりそうだねっ！！",
-                "おもしろいしてんだねかんがえた！！",
-                "なるほどねあたらしいはっけんだね！",
-                "いいせんすもっとみせてほしいな！！",
-                "こころにのこるいいひとことだ！！！",
-                "いいねもっとたくさんきかせてよ！！",
-                "さいこうだねいっしょにやりたいな！",
-                "すごいはっそうだねまねしてみたい！",
-                "まいにちちょっとたのしくなりそう！"
-            ];
             const randomIndex = Math.floor(Math.random() * messages.length);
-            h2 = `<p class="h2">${messages[randomIndex]}</p>`
 
-            let h = '<div>' + '<div class="h1out">' + h1 + '</div>'+ '<br>'+ '<div class="h2out">' + h2 + '</div>'+ '</div>';
+            const h = `
+        <div id="${key}">
+            <div class="h1out">
+                <p id="${key}_update" class="flex-container-item h1" contenteditable="true">${msg.text}</p>
+            </div><br>
+            <div class="h2out">
+                <p class="h2">${messages[randomIndex]}</p>
+            </div>
+            <div class="send">
+                <button class="remove btn btn-small" data-key="${key}">削除</button>
+                <button class="update btn btn-small" data-key="${key}">更新</button>
+            </div>
+        </div>`;
 
             $("#output").append(h);
             $('#output').scrollTop($('#output')[0].scrollHeight);
         });
 
-        //１個だけ削除
-        ('#output').on('click', '.h1', function () { (this).remove(); });
-        ('#output').on('click', '.h2', function () { (this).remove(); });
+        //削除イベント
+        $("#output").on("click", ".remove", function () {
+            const key = $(this).attr("data-key");
+            const remove_item = ref(db, "chat/" + key);
+            remove(remove_item);//Firebaseデータ削除関数
+        });
 
+        //更新イベント
+        $("#output").on("click", ".update", function () {
+            const key = $(this).attr("data-key");
+            update(ref(db, "chat/" + key), {
+                text: $("#" + key + '_update').text()
+            });
+        });
+
+        //削除処理がFirebase側で実行されたらイベント発生!
+        onChildRemoved(dbRef, (data) => {
+            $("#" + data.key).remove();//DOM操作関数(対象を削除)
+        });
+
+        //更新処理がFirebase側で実行されたらイベント発生!
+        onChildChanged(dbRef, (data) => {
+            $("#" + data.key + '_update').html(data.val().text);
+            $("#" + data.key + '_update').fadeOut(800).fadeIn(800);
+        });
     </script>
 
 </body>
